@@ -16,11 +16,10 @@ $ carbonize -c my-config.json example.go  # Use a custom configuration.
 
 On Windows, Linux, and macOS, you can use [the pre-built binaries].
 
-If your system has [Go 1.18+], you can build from source:
+If your system has [Go 1.18+], you can build from source.
 
 ```
-git clone https://interrato.dev/carbonize && cd carbonize
-go build -o . interrato.dev/carbonize/cmd/...
+go install interrato.dev/carbonize/cmd/...@latest
 ```
 
 <!-- <table>
@@ -37,6 +36,8 @@ go build -o . interrato.dev/carbonize/cmd/...
         </td>
     </tr>
 </table> -->
+
+Help from new packagers is very welcome.
 
 ## Usage
 
