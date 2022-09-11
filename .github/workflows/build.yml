@@ -1,0 +1,87 @@
+name: Build and upload binaries
+on:
+  release:
+    types: [published]
+  push:
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  build:
+    name: Build binaries
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install Go
+        uses: actions/setup-go@v3
+        with:
+          go-version: 1.x
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Build binaries
+        run: |
+          cp LICENSE "$RUNNER_TEMP/LICENSE"
+          echo -e "\n---\n" >> "$RUNNER_TEMP/LICENSE"
+          curl "https://go.dev/LICENSE?m=text" >> "$RUNNER_TEMP/LICENSE"
+          VERSION="$(git describe --tags)"
+          function build_carbonize() {
+            DIR="$(mktemp -d)"
+            mkdir "$DIR/carbonize"
+            cp "$RUNNER_TEMP/LICENSE" "$DIR/carbonize"
+            go build -o "$DIR/carbonize" -ldflags "-X main.Version=$VERSION" -trimpath ./cmd/...
+            if [ "$GOOS" == "windows" ]; then
+              ( cd "$DIR"; zip carbonize.zip -r carbonize )
+              mv "$DIR/carbonize.zip" "carbonize-$VERSION-$GOOS-$GOARCH.zip"
+            else
+              tar -cvzf "carbonize-$VERSION-$GOOS-$GOARCH.tar.gz" -C "$DIR" carbonize
+            fi
+          }
+          export CGO_ENABLED=0
+          GOOS=linux GOARCH=amd64 build_carbonize
+          GOOS=linux GOARCH=arm GOARM=6 build_carbonize
+          GOOS=linux GOARCH=arm64 build_carbonize
+          GOOS=darwin GOARCH=amd64 build_carbonize
+          GOOS=darwin GOARCH=arm64 build_carbonize
+          GOOS=windows GOARCH=amd64 build_carbonize
+          GOOS=freebsd GOARCH=amd64 build_carbonize
+      - name: Upload workflow artifacts
+        uses: actions/upload-artifacts@v3
+        with:
+          name: carbonize-binaries
+          path: carbonize-*
+  upload:
+    name: Upload release binaries
+    if: ${{ github.event_name == 'release' }}
+    needs: build
+    permissions:
+      contents: write
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download workflow artifacts
+        uses: actions/download-artifacts@v3
+        with:
+          name: carbonize-binaries
+      - name: Upload release artifacts
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const fs = require("fs").promises;
+            const { repo: { owner, repo }, sha } = context;
+
+            const release = await github.rest.repos.getReleaseByTag({
+              owner, repo,
+              tag: process.env.GITHUB_REF_NAME,
+            });
+            console.log("Release:", { release });
+
+            for (let file of await fs.readdir(".")) {
+              if (!file.startsWith("carbonize-")) continue;
+              console.log("Uploading", file);
+              await github.rest.repos.uploadReleaseAsset({
+                owner, repo,
+                release_id: release.data.id,
+                name: file,
+                data: await fs.readFile(file),
+              });
+            }
