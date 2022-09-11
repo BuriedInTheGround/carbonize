@@ -61,7 +61,7 @@ $ curl -s https://raw.githubusercontent.com/BuriedInTheGround/fine/main/fine.go 
 If your system has [Go 1.18+], you can build from source:
 
 ```
-git clone https://github.com/BuriedInTheGround/carbonize && cd carbonize
+git clone https://interrato.dev/carbonize && cd carbonize
 go build -o . interrato.dev/carbonize/cmd/...
 ```
 
