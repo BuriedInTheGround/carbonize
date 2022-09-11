@@ -1,5 +1,7 @@
 # carbonize
 
+[![Go Reference](https://pkg.go.dev/badge/interrato.dev/carbonize.svg)](https://pkg.go.dev/interrato.dev/carbonize)
+
 A simple tool for opening any textual content with [Carbon].
 
 It allows for custom JSON configurations, and it features UNIX-style composability.
