@@ -12,6 +12,32 @@ $ cat example.go | carbonize              # This is equivalent to the previous c
 $ carbonize -c my-config.json example.go  # Use a custom configuration.
 ```
 
+## Installation
+
+On Windows, Linux, and macOS, you can use [the pre-built binaries].
+
+If your system has [Go 1.18+], you can build from source:
+
+```
+git clone https://interrato.dev/carbonize && cd carbonize
+go build -o . interrato.dev/carbonize/cmd/...
+```
+
+<!-- <table>
+    <tr>
+        <td>NixOS / Nix</td>
+        <td>
+            <code>TODO</code>
+        </td>
+    </tr>
+    <tr>
+        <td>TODO</td>
+        <td>
+            <code>TODO</code>
+        </td>
+    </tr>
+</table> -->
+
 ## Usage
 
 ```
@@ -55,32 +81,6 @@ You can easily run carbonize on GitHub raw source files by combining it with `cu
 ```
 $ curl -s https://raw.githubusercontent.com/BuriedInTheGround/fine/main/fine.go | carbonize
 ```
-
-## Installation
-
-<!-- On Windows, Linux, and macOS, you can use [the pre-built binaries]. -->
-
-If your system has [Go 1.18+], you can build from source:
-
-```
-git clone https://interrato.dev/carbonize && cd carbonize
-go build -o . interrato.dev/carbonize/cmd/...
-```
-
-<!-- <table>
-    <tr>
-        <td>NixOS / Nix</td>
-        <td>
-            <code>TODO</code>
-        </td>
-    </tr>
-    <tr>
-        <td>TODO</td>
-        <td>
-            <code>TODO</code>
-        </td>
-    </tr>
-</table> -->
 
 
 <!-- References -->
