@@ -23,7 +23,7 @@ jobs:
         run: |
           cp LICENSE "$RUNNER_TEMP/LICENSE"
           echo -e "\n---\n" >> "$RUNNER_TEMP/LICENSE"
-          curl "https://go.dev/LICENSE?m=text" >> "$RUNNER_TEMP/LICENSE"
+          curl -L "https://go.dev/LICENSE?m=text" >> "$RUNNER_TEMP/LICENSE"
           VERSION="$(git describe --tags)"
           function build_carbonize() {
             DIR="$(mktemp -d)"
